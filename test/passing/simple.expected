@@ -1,0 +1,278 @@
+type ctx
+type x = int[@@deriving graphql]
+include
+  struct
+    let (x_arg_typ : x option Graphql_lwt.Schema.Arg.arg_typ) =
+      Fun.id Graphql_lwt.Schema.Arg.int
+    let (x_schema_typ : (ctx, _) Graphql_lwt.Schema.typ) =
+      Fun.id Graphql_lwt.Schema.int
+  end[@@ocaml.doc "@inline"][@@merlin.hide ]
+type v = {
+  name: string option ;
+  books: string list }[@@deriving graphql]
+include
+  struct
+    let (v_arg_typ : v option Graphql_lwt.Schema.Arg.arg_typ) =
+      Graphql_lwt.Schema.Arg.obj "VInput"
+        ~fields:[Graphql_lwt.Schema.Arg.arg ?doc:None "books"
+                   ~typ:(Graphql_lwt.Schema.Arg.non_null
+                           (Graphql_lwt.Schema.Arg.list
+                              (Graphql_lwt.Schema.Arg.non_null
+                                 Graphql_lwt.Schema.Arg.string)));
+                Graphql_lwt.Schema.Arg.arg ?doc:None "name"
+                  ~typ:(Fun.id Graphql_lwt.Schema.Arg.string)]
+        ~coerce:(fun books -> fun name -> { name; books })
+    let (v_schema_typ : (ctx, _) Graphql_lwt.Schema.typ) =
+      Graphql_lwt.Schema.obj "V"
+        ~fields:[Graphql_lwt.Schema.field ?doc:None "books"
+                   ~typ:(Graphql_lwt.Schema.non_null
+                           (Graphql_lwt.Schema.list
+                              (Graphql_lwt.Schema.non_null
+                                 Graphql_lwt.Schema.string))) ~args:[]
+                   ~resolve:(fun _ -> fun p -> p.books);
+                Graphql_lwt.Schema.field ?doc:None "name"
+                  ~typ:(Fun.id Graphql_lwt.Schema.string) ~args:[]
+                  ~resolve:(fun _ -> fun p -> p.name)]
+  end[@@ocaml.doc "@inline"][@@merlin.hide ]
+module T :
+  sig
+    type inner[@@deriving graphql]
+    include
+      sig
+        val inner_arg_typ : inner option Graphql_lwt.Schema.Arg.arg_typ
+        val inner_schema_typ : (ctx, inner option) Graphql_lwt.Schema.typ
+      end[@@ocaml.doc "@inline"][@@merlin.hide ]
+  end =
+  struct
+    type inner = {
+      name: string }[@@deriving graphql]
+    include
+      struct
+        let (inner_arg_typ : inner option Graphql_lwt.Schema.Arg.arg_typ) =
+          Graphql_lwt.Schema.Arg.obj "InnerInput"
+            ~fields:[Graphql_lwt.Schema.Arg.arg ?doc:None "name"
+                       ~typ:(Graphql_lwt.Schema.Arg.non_null
+                               Graphql_lwt.Schema.Arg.string)]
+            ~coerce:(fun name -> { name })
+        let (inner_schema_typ : (ctx, _) Graphql_lwt.Schema.typ) =
+          Graphql_lwt.Schema.obj "Inner"
+            ~fields:[Graphql_lwt.Schema.field ?doc:None "name"
+                       ~typ:(Graphql_lwt.Schema.non_null
+                               Graphql_lwt.Schema.string) ~args:[]
+                       ~resolve:(fun _ -> fun p -> p.name)]
+      end[@@ocaml.doc "@inline"][@@merlin.hide ]
+  end 
+type p = T.inner[@@deriving graphql]
+include
+  struct
+    let (p_arg_typ : p option Graphql_lwt.Schema.Arg.arg_typ) =
+      Fun.id T.inner_arg_typ
+    let (p_schema_typ : (ctx, _) Graphql_lwt.Schema.typ) =
+      Fun.id T.inner_schema_typ
+  end[@@ocaml.doc "@inline"][@@merlin.hide ]
+module A =
+  struct
+    type train_class = [ `Standard  | `First_class ][@@deriving graphql]
+    include
+      struct
+        let (train_class_arg_typ :
+          train_class option Graphql_lwt.Schema.Arg.arg_typ) =
+          Graphql_lwt.Schema.Arg.enum "TrainClassInput"
+            ~values:[Graphql_lwt.Schema.enum_value "First_class"
+                       ~value:`First_class;
+                    Graphql_lwt.Schema.enum_value "Standard" ~value:`Standard]
+        let (train_class_schema_typ : (ctx, _) Graphql_lwt.Schema.typ) =
+          Graphql_lwt.Schema.enum "TrainClass"
+            ~values:[Graphql_lwt.Schema.enum_value "First_class"
+                       ~value:`First_class;
+                    Graphql_lwt.Schema.enum_value "Standard" ~value:`Standard]
+      end[@@ocaml.doc "@inline"][@@merlin.hide ]
+    type train_details =
+      {
+      origin: string ;
+      destination: string ;
+      via: string list ;
+      train_class: train_class ;
+      train_type: string option ;
+      number_of_people: int }[@@deriving graphql]
+    include
+      struct
+        let (train_details_arg_typ :
+          train_details option Graphql_lwt.Schema.Arg.arg_typ) =
+          Graphql_lwt.Schema.Arg.obj "TrainDetailsInput"
+            ~fields:[Graphql_lwt.Schema.Arg.arg ?doc:None "number_of_people"
+                       ~typ:(Graphql_lwt.Schema.Arg.non_null
+                               Graphql_lwt.Schema.Arg.int);
+                    Graphql_lwt.Schema.Arg.arg ?doc:None "train_type"
+                      ~typ:(Fun.id Graphql_lwt.Schema.Arg.string);
+                    Graphql_lwt.Schema.Arg.arg ?doc:None "train_class"
+                      ~typ:(Graphql_lwt.Schema.Arg.non_null
+                              train_class_arg_typ);
+                    Graphql_lwt.Schema.Arg.arg ?doc:None "via"
+                      ~typ:(Graphql_lwt.Schema.Arg.non_null
+                              (Graphql_lwt.Schema.Arg.list
+                                 (Graphql_lwt.Schema.Arg.non_null
+                                    Graphql_lwt.Schema.Arg.string)));
+                    Graphql_lwt.Schema.Arg.arg ?doc:None "destination"
+                      ~typ:(Graphql_lwt.Schema.Arg.non_null
+                              Graphql_lwt.Schema.Arg.string);
+                    Graphql_lwt.Schema.Arg.arg ?doc:None "origin"
+                      ~typ:(Graphql_lwt.Schema.Arg.non_null
+                              Graphql_lwt.Schema.Arg.string)]
+            ~coerce:(fun number_of_people ->
+                       fun train_type ->
+                         fun train_class ->
+                           fun via ->
+                             fun destination ->
+                               fun origin ->
+                                 {
+                                   origin;
+                                   destination;
+                                   via;
+                                   train_class;
+                                   train_type;
+                                   number_of_people
+                                 })
+        let (train_details_schema_typ : (ctx, _) Graphql_lwt.Schema.typ) =
+          Graphql_lwt.Schema.obj "TrainDetails"
+            ~fields:[Graphql_lwt.Schema.field ?doc:None "number_of_people"
+                       ~typ:(Graphql_lwt.Schema.non_null
+                               Graphql_lwt.Schema.int) ~args:[]
+                       ~resolve:(fun _ -> fun p -> p.number_of_people);
+                    Graphql_lwt.Schema.field ?doc:None "train_type"
+                      ~typ:(Fun.id Graphql_lwt.Schema.string) ~args:[]
+                      ~resolve:(fun _ -> fun p -> p.train_type);
+                    Graphql_lwt.Schema.field ?doc:None "train_class"
+                      ~typ:(Graphql_lwt.Schema.non_null
+                              train_class_schema_typ) ~args:[]
+                      ~resolve:(fun _ -> fun p -> p.train_class);
+                    Graphql_lwt.Schema.field ?doc:None "via"
+                      ~typ:(Graphql_lwt.Schema.non_null
+                              (Graphql_lwt.Schema.list
+                                 (Graphql_lwt.Schema.non_null
+                                    Graphql_lwt.Schema.string))) ~args:[]
+                      ~resolve:(fun _ -> fun p -> p.via);
+                    Graphql_lwt.Schema.field ?doc:None "destination"
+                      ~typ:(Graphql_lwt.Schema.non_null
+                              Graphql_lwt.Schema.string) ~args:[]
+                      ~resolve:(fun _ -> fun p -> p.destination);
+                    Graphql_lwt.Schema.field ?doc:None "origin"
+                      ~typ:(Graphql_lwt.Schema.non_null
+                              Graphql_lwt.Schema.string) ~args:[]
+                      ~resolve:(fun _ -> fun p -> p.origin)]
+      end[@@ocaml.doc "@inline"][@@merlin.hide ]
+  end
+module B =
+  struct
+    type train_class = A.train_class[@@deriving graphql]
+    include
+      struct
+        let (train_class_arg_typ :
+          train_class option Graphql_lwt.Schema.Arg.arg_typ) =
+          Fun.id A.train_class_arg_typ
+        let (train_class_schema_typ : (ctx, _) Graphql_lwt.Schema.typ) =
+          Fun.id A.train_class_schema_typ
+      end[@@ocaml.doc "@inline"][@@merlin.hide ]
+    type train_details = A.train_details =
+      {
+      origin: string ;
+      destination: string ;
+      via: string list ;
+      train_class: train_class ;
+      train_type: string option ;
+      number_of_people: int }[@@deriving graphql]
+    include
+      struct
+        let (train_details_arg_typ :
+          train_details option Graphql_lwt.Schema.Arg.arg_typ) =
+          Graphql_lwt.Schema.Arg.obj "TrainDetailsInput"
+            ~fields:[Graphql_lwt.Schema.Arg.arg ?doc:None "number_of_people"
+                       ~typ:(Graphql_lwt.Schema.Arg.non_null
+                               Graphql_lwt.Schema.Arg.int);
+                    Graphql_lwt.Schema.Arg.arg ?doc:None "train_type"
+                      ~typ:(Fun.id Graphql_lwt.Schema.Arg.string);
+                    Graphql_lwt.Schema.Arg.arg ?doc:None "train_class"
+                      ~typ:(Graphql_lwt.Schema.Arg.non_null
+                              train_class_arg_typ);
+                    Graphql_lwt.Schema.Arg.arg ?doc:None "via"
+                      ~typ:(Graphql_lwt.Schema.Arg.non_null
+                              (Graphql_lwt.Schema.Arg.list
+                                 (Graphql_lwt.Schema.Arg.non_null
+                                    Graphql_lwt.Schema.Arg.string)));
+                    Graphql_lwt.Schema.Arg.arg ?doc:None "destination"
+                      ~typ:(Graphql_lwt.Schema.Arg.non_null
+                              Graphql_lwt.Schema.Arg.string);
+                    Graphql_lwt.Schema.Arg.arg ?doc:None "origin"
+                      ~typ:(Graphql_lwt.Schema.Arg.non_null
+                              Graphql_lwt.Schema.Arg.string)]
+            ~coerce:(fun number_of_people ->
+                       fun train_type ->
+                         fun train_class ->
+                           fun via ->
+                             fun destination ->
+                               fun origin ->
+                                 {
+                                   origin;
+                                   destination;
+                                   via;
+                                   train_class;
+                                   train_type;
+                                   number_of_people
+                                 })
+        let (train_details_schema_typ : (ctx, _) Graphql_lwt.Schema.typ) =
+          Graphql_lwt.Schema.obj "TrainDetails"
+            ~fields:[Graphql_lwt.Schema.field ?doc:None "number_of_people"
+                       ~typ:(Graphql_lwt.Schema.non_null
+                               Graphql_lwt.Schema.int) ~args:[]
+                       ~resolve:(fun _ -> fun p -> p.number_of_people);
+                    Graphql_lwt.Schema.field ?doc:None "train_type"
+                      ~typ:(Fun.id Graphql_lwt.Schema.string) ~args:[]
+                      ~resolve:(fun _ -> fun p -> p.train_type);
+                    Graphql_lwt.Schema.field ?doc:None "train_class"
+                      ~typ:(Graphql_lwt.Schema.non_null
+                              train_class_schema_typ) ~args:[]
+                      ~resolve:(fun _ -> fun p -> p.train_class);
+                    Graphql_lwt.Schema.field ?doc:None "via"
+                      ~typ:(Graphql_lwt.Schema.non_null
+                              (Graphql_lwt.Schema.list
+                                 (Graphql_lwt.Schema.non_null
+                                    Graphql_lwt.Schema.string))) ~args:[]
+                      ~resolve:(fun _ -> fun p -> p.via);
+                    Graphql_lwt.Schema.field ?doc:None "destination"
+                      ~typ:(Graphql_lwt.Schema.non_null
+                              Graphql_lwt.Schema.string) ~args:[]
+                      ~resolve:(fun _ -> fun p -> p.destination);
+                    Graphql_lwt.Schema.field ?doc:None "origin"
+                      ~typ:(Graphql_lwt.Schema.non_null
+                              Graphql_lwt.Schema.string) ~args:[]
+                      ~resolve:(fun _ -> fun p -> p.origin)]
+      end[@@ocaml.doc "@inline"][@@merlin.hide ]
+  end
+module S :
+  sig
+    type person[@@deriving graphql_schema]
+    include
+      sig val person_schema_typ : (ctx, person option) Graphql_lwt.Schema.typ
+      end[@@ocaml.doc "@inline"][@@merlin.hide ]
+  end =
+  struct
+    type person =
+      {
+      name: string [@doc "A person's name"];
+      age: int [@doc "A person's age"]}[@@deriving graphql_schema]
+    include
+      struct
+        let (person_schema_typ : (ctx, _) Graphql_lwt.Schema.typ) =
+          Graphql_lwt.Schema.obj "Person"
+            ~fields:[Graphql_lwt.Schema.field ?doc:(Some "A person's age")
+                       "age"
+                       ~typ:(Graphql_lwt.Schema.non_null
+                               Graphql_lwt.Schema.int) ~args:[]
+                       ~resolve:(fun _ -> fun p -> p.age);
+                    Graphql_lwt.Schema.field ?doc:(Some "A person's name")
+                      "name"
+                      ~typ:(Graphql_lwt.Schema.non_null
+                              Graphql_lwt.Schema.string) ~args:[]
+                      ~resolve:(fun _ -> fun p -> p.name)]
+      end[@@ocaml.doc "@inline"][@@merlin.hide ]
+  end 
