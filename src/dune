@@ -1,6 +1,6 @@
 (library
  (name ppx_deriving_graphql)
- ; (public_name ppx_deriving_yaml)
+ (public_name ppx_deriving_graphql)
  (kind ppx_deriver)
  (libraries graphql-lwt ppxlib)
  (preprocess

@@ -17,9 +17,9 @@ We can then use these values that have been generated.
 
 ```ocaml
 # person_schema_typ;;
+Line 1, characters 1-18:
+Error: Unbound value person_schema_typ
 ```
-
-
 
 ### Attributes
 
