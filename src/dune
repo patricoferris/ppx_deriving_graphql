@@ -2,6 +2,6 @@
  (name ppx_deriving_graphql)
  (public_name ppx_deriving_graphql)
  (kind ppx_deriver)
- (libraries graphql-lwt ppxlib)
+ (libraries graphql-lwt ppxlib ppxlib.astlib)
  (preprocess
   (pps ppxlib.metaquot)))
