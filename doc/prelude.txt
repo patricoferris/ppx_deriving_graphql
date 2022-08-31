@@ -1,2 +1,8 @@
 #require "graphql-lwt";;
 #require "ppx_deriving_graphql";;
+let make_schema typ data = Graphql_lwt.Schema.(schema [
+  field "field"
+    ~typ
+    ~args:Arg.[]
+    ~resolve:(fun info () -> data)
+])

@@ -46,5 +46,6 @@ end = struct
   type person = {
     name : string; [@doc "A person's name"]
     age : int; [@doc "A person's age"]
-  }[@@deriving graphql_schema]
+  }
+  [@@deriving graphql_schema]
 end
