@@ -1,0 +1,2 @@
+#require "graphql-lwt";;
+#require "ppx_deriving_graphql";;

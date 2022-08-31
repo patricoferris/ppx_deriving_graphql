@@ -242,7 +242,7 @@ let generate_impl_schema ~ctxt (_rec_flag, type_decls) =
                    [%expr
                      Graphql_lwt.Schema.enum_value
                        [%e estring ~loc constr.pcd_name.txt]
-                       ~doc:[%e constr_doc] ~value:[%e v]
+                       ?doc:[%e constr_doc] ~value:[%e v]
                      :: [%e expr_acc]])
                  [%expr []] constructors
              in

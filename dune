@@ -1,0 +1,4 @@
+(mdx 
+ (files README.md)
+ (packages ppx_deriving_graphql)
+ (preludes ./doc/prelude.txt))

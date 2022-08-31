@@ -38,8 +38,8 @@ include
                   ~value:Hello]
     let (enum_schema_typ : (ctx, _) Graphql_lwt.Schema.typ) =
       Graphql_lwt.Schema.enum "Enum"
-        ~values:[Graphql_lwt.Schema.enum_value "World" ~doc:(Some "World")
+        ~values:[Graphql_lwt.Schema.enum_value "World" ?doc:(Some "World")
                    ~value:World;
-                Graphql_lwt.Schema.enum_value "Hello" ~doc:(Some "Hello")
+                Graphql_lwt.Schema.enum_value "Hello" ?doc:(Some "Hello")
                   ~value:Hello]
   end[@@ocaml.doc "@inline"][@@merlin.hide ]
