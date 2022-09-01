@@ -135,14 +135,14 @@ module A =
                                  })
         let (train_details_schema_typ : (ctx, _) Graphql_lwt.Schema.typ) =
           Graphql_lwt.Schema.obj "TrainDetails"
-            ~fields:[Graphql_lwt.Schema.field ?doc:None "number_of_people"
+            ~fields:[Graphql_lwt.Schema.field ?doc:None "numberOfPeople"
                        ~typ:(Graphql_lwt.Schema.non_null
                                Graphql_lwt.Schema.int) ~args:[]
                        ~resolve:(fun _ -> fun p -> p.number_of_people);
-                    Graphql_lwt.Schema.field ?doc:None "train_type"
+                    Graphql_lwt.Schema.field ?doc:None "trainType"
                       ~typ:(Fun.id Graphql_lwt.Schema.string) ~args:[]
                       ~resolve:(fun _ -> fun p -> p.train_type);
-                    Graphql_lwt.Schema.field ?doc:None "train_class"
+                    Graphql_lwt.Schema.field ?doc:None "trainClass"
                       ~typ:(Graphql_lwt.Schema.non_null
                               train_class_schema_typ) ~args:[]
                       ~resolve:(fun _ -> fun p -> p.train_class);
@@ -221,14 +221,14 @@ module B =
                                  })
         let (train_details_schema_typ : (ctx, _) Graphql_lwt.Schema.typ) =
           Graphql_lwt.Schema.obj "TrainDetails"
-            ~fields:[Graphql_lwt.Schema.field ?doc:None "number_of_people"
+            ~fields:[Graphql_lwt.Schema.field ?doc:None "numberOfPeople"
                        ~typ:(Graphql_lwt.Schema.non_null
                                Graphql_lwt.Schema.int) ~args:[]
                        ~resolve:(fun _ -> fun p -> p.number_of_people);
-                    Graphql_lwt.Schema.field ?doc:None "train_type"
+                    Graphql_lwt.Schema.field ?doc:None "trainType"
                       ~typ:(Fun.id Graphql_lwt.Schema.string) ~args:[]
                       ~resolve:(fun _ -> fun p -> p.train_type);
-                    Graphql_lwt.Schema.field ?doc:None "train_class"
+                    Graphql_lwt.Schema.field ?doc:None "trainClass"
                       ~typ:(Graphql_lwt.Schema.non_null
                               train_class_schema_typ) ~args:[]
                       ~resolve:(fun _ -> fun p -> p.train_class);

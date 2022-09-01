@@ -12,6 +12,15 @@ let upper_snake s =
   |> List.map String.capitalize_ascii
   |> String.concat ""
 
+let upper_first_lower_snake s =
+  let words =
+    match String.split_on_char '_' s with
+    | s :: rest ->
+        String.uncapitalize_ascii s :: List.map String.capitalize_ascii rest
+    | [] -> []
+  in
+  String.concat "" words
+
 let mangle_name_schema =
   let base = "schema_typ" in
   function "t" -> base | x -> x ^ "_" ^ base
@@ -121,7 +130,7 @@ let record_to_schema ~loc ~label fields =
         in
         [%expr
           Graphql_lwt.Schema.field ?doc:[%e field_doc]
-            [%e estring ~loc field_name]
+            [%e estring ~loc (upper_first_lower_snake field_name)]
             ~typ:[%e type_to_schema field.pld_type]
             ~args:[] ~resolve:[%e accessor_func]
           :: [%e expr_acc]])

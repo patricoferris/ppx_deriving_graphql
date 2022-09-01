@@ -27,8 +27,8 @@ What follows is a basic tutorial on how to use the ppx.
 The simplest use of the ppx is to generate both a schema and an argument. If your type is called `person` then two functions are generated called `person_schema_typ` and `person_arg_typ`.
 
 ```ocaml
-# type person = { name : string }[@@deriving graphql];;
-Line 1, characters 1-52:
+# type person = { name : string; unique_number : int }[@@deriving graphql];;
+Line 1, characters 1-73:
 Error: Unbound type constructor ctx
 ```
 
@@ -36,7 +36,7 @@ Schemas require a context. Currently, this ppx assumes that that GraphQL context
 
 ```ocaml
 type ctx = unit
-type person = { name : string }[@@deriving graphql]
+type person = { name : string; unique_number : int }[@@deriving graphql]
 ```
 
 With the context defined, we can then use these values that have been generated.
@@ -62,9 +62,11 @@ val schema_typ : (ctx, t option) Graphql_lwt.Schema.typ = <abstr>
 The [prelude file](./doc/prelude.txt) contains a simple `make_schema` function which makes a new field called `"field"` with a supplied type and set of data. We first need to construct a valid query and some fake data to use.
 
 ```ocaml
-let query = Graphql_parser.parse {| { field { name } } |} |> Result.get_ok
-let data = { name = "Alice" }
+let query = Graphql_parser.parse {| { field { name uniqueNumber } } |} |> Result.get_ok
+let data = { name = "Alice"; unique_number = 1 }
 ```
+
+An important aspect to note is that by default (an currently it is not configurable) the names for fields in records are converted to snake-case i.e. `unique_number` becomes `uniqueNumber` in the query.
 
 We can the execute the query on the data. We also pass in the `()` value for our context.
 
@@ -79,7 +81,10 @@ We can the execute the query on the data. We also pass in the `()` value for our
 Ok
  (`Response
     (`Assoc
-       [("data", `Assoc [("field", `Assoc [("name", `String "Alice")])])]))
+       [("data",
+         `Assoc
+           [("field",
+             `Assoc [("name", `String "Alice"); ("uniqueNumber", `Int 1)])])]))
 ```
 
 ### Attributes
