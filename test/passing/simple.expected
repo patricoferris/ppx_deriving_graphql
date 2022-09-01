@@ -100,12 +100,12 @@ module A =
         let (train_details_arg_typ :
           train_details option Graphql_lwt.Schema.Arg.arg_typ) =
           Graphql_lwt.Schema.Arg.obj "TrainDetailsInput"
-            ~fields:[Graphql_lwt.Schema.Arg.arg ?doc:None "number_of_people"
+            ~fields:[Graphql_lwt.Schema.Arg.arg ?doc:None "numberOfPeople"
                        ~typ:(Graphql_lwt.Schema.Arg.non_null
                                Graphql_lwt.Schema.Arg.int);
-                    Graphql_lwt.Schema.Arg.arg ?doc:None "train_type"
+                    Graphql_lwt.Schema.Arg.arg ?doc:None "trainType"
                       ~typ:(Fun.id Graphql_lwt.Schema.Arg.string);
-                    Graphql_lwt.Schema.Arg.arg ?doc:None "train_class"
+                    Graphql_lwt.Schema.Arg.arg ?doc:None "trainClass"
                       ~typ:(Graphql_lwt.Schema.Arg.non_null
                               train_class_arg_typ);
                     Graphql_lwt.Schema.Arg.arg ?doc:None "via"
@@ -186,12 +186,12 @@ module B =
         let (train_details_arg_typ :
           train_details option Graphql_lwt.Schema.Arg.arg_typ) =
           Graphql_lwt.Schema.Arg.obj "TrainDetailsInput"
-            ~fields:[Graphql_lwt.Schema.Arg.arg ?doc:None "number_of_people"
+            ~fields:[Graphql_lwt.Schema.Arg.arg ?doc:None "numberOfPeople"
                        ~typ:(Graphql_lwt.Schema.Arg.non_null
                                Graphql_lwt.Schema.Arg.int);
-                    Graphql_lwt.Schema.Arg.arg ?doc:None "train_type"
+                    Graphql_lwt.Schema.Arg.arg ?doc:None "trainType"
                       ~typ:(Fun.id Graphql_lwt.Schema.Arg.string);
-                    Graphql_lwt.Schema.Arg.arg ?doc:None "train_class"
+                    Graphql_lwt.Schema.Arg.arg ?doc:None "trainClass"
                       ~typ:(Graphql_lwt.Schema.Arg.non_null
                               train_class_arg_typ);
                     Graphql_lwt.Schema.Arg.arg ?doc:None "via"

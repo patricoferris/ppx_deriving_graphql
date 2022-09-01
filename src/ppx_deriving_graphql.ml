@@ -197,7 +197,8 @@ let record_to_arg ~loc ~label fields =
         in
         [%expr
           Graphql_lwt.Schema.Arg.arg ?doc:[%e field_doc]
-            [%e estring ~loc field_name] ~typ:[%e type_to_arg field.pld_type]
+            [%e estring ~loc (upper_first_lower_snake field_name)]
+            ~typ:[%e type_to_arg field.pld_type]
           :: [%e expr_acc]])
       [%expr []] fields
   in
